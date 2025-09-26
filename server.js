@@ -51,10 +51,7 @@ const playerState = new Map(); // socket.id -> { name, branch, year, score, ques
 
 const app = express();
 const server = http.createServer(app);
-// Make compatible with localtunnel by prioritizing polling
-const io = new Server(server, {
-    transports: ['polling', 'websocket']
-});
+const io = new Server(server);
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -73,12 +70,11 @@ app.get('/', (req, res) => {
     body{font-family:'Lato',Arial,sans-serif;background-color:var(--primary-bg);color:var(--text-dark);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;padding-top:100px;}
     .hidden{display:none !important;}
     .app-header{position:fixed;top:0;left:0;width:100%;height:80px;background-color:var(--card-bg);display:flex;justify-content:space-between;align-items:center;padding:0 30px;box-shadow:0 2px 10px rgba(0,0,0,0.1);z-index:10;}
+    .header-left { display: flex; align-items: center; }
     .header-logo{height:55px; width: auto;}
     #college-logo{height: 75px;}
-    #iste-logo{height: 55px; width: 55px;}
-    .header-center{text-align:center;}
-    .header-title{font-size:1.5rem;font-weight:bold;color:var(--button-bg);}
-    #player-count{font-size:0.9rem;color:var(--text-muted);}
+    .header-title{font-size:1.5rem;font-weight:bold;color:var(--button-bg); margin-left: 20px;}
+    #player-count{font-size:1.2rem;color:var(--text-muted);}
     .card{background-color:var(--card-bg);border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.1);padding:30px 40px;width:100%;max-width:600px;text-align:center;}
     h1,h2,h3{margin-bottom:20px;}
     #qPrompt{font-size:1.25rem;margin-bottom:30px;min-height:50px;}
@@ -100,12 +96,11 @@ app.get('/', (req, res) => {
 </head>
 <body>
   <header class="app-header">
-      <img src="/ssgmce-logo.jpg" alt="College Logo" class="header-logo" id="college-logo">
-      <div class="header-center">
-        <div class="header-title">Team ISTE</div>
-        <div id="player-count">Players: 0</div>
+      <div class="header-left">
+        <img src="/ssgmce-logo.jpg" alt="College Logo" class="header-logo" id="college-logo">
+        <div class="header-title">EMW Class Quiz</div>
       </div>
-      <img src="/iste-logo.png" alt="ISTE Logo" class="header-logo" id="iste-logo">
+      <div id="player-count">Players: 0</div>
   </header>
   <div id="joinDiv" class="card hidden">
     <h1>Quiz Challenge</h1>
@@ -124,7 +119,7 @@ app.get('/', (req, res) => {
   </div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    const socket = io({ transports: ['polling'] });
+    const socket = io();
     let myName = null;
     let currentQuestion = null;
     let timerInterval = null;
@@ -265,12 +260,11 @@ app.get('/leaderboard', (req, res) => {
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Lato',Arial,sans-serif;background-color:var(--primary-bg);color:var(--text-dark);display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;padding:20px;padding-top:100px;}
     .app-header{position:fixed;top:0;left:0;width:100%;height:80px;background-color:var(--card-bg);display:flex;justify-content:space-between;align-items:center;padding:0 30px;box-shadow:0 2px 10px rgba(0,0,0,0.1);z-index:10;}
+    .header-left { display: flex; align-items: center; }
     .header-logo{height:55px; width: auto;}
     #college-logo{height: 75px;}
-    #iste-logo{height: 55px; width: 55px;}
-    .header-center{text-align:center;}
-    .header-title{font-size:1.5rem;font-weight:bold;color:var(--button-bg);}
-    #player-count{font-size:0.9rem;color:var(--text-muted);}
+    .header-title{font-size:1.5rem;font-weight:bold;color:var(--button-bg); margin-left: 20px;}
+    #player-count{font-size:1.2rem;color:var(--text-muted);}
     .card{background-color:var(--card-bg);border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.1);padding:30px 40px;width:100%;max-width:800px;text-align:center;}
     h1{margin-bottom:20px;}
     .table-wrapper { overflow-x: auto; }
@@ -289,12 +283,11 @@ app.get('/leaderboard', (req, res) => {
 </head>
 <body>
   <header class="app-header">
-      <img src="/ssgmce-logo.jpg" alt="College Logo" class="header-logo" id="college-logo">
-      <div class="header-center">
-        <div class="header-title">Team ISTE</div>
-        <div id="player-count">Total Players: 0</div>
+      <div class="header-left">
+        <img src="/ssgmce-logo.jpg" alt="College Logo" class="header-logo" id="college-logo">
+        <div class="header-title">EMW Class Quiz</div>
       </div>
-      <img src="/iste-logo.png" alt="ISTE Logo" class="header-logo" id="iste-logo">
+      <div id="player-count">Total Players: 0</div>
   </header>
   <div class="card">
     <h1>Top 20 Players</h1>
@@ -307,7 +300,7 @@ app.get('/leaderboard', (req, res) => {
   </div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    const socket = io({ transports: ['polling'] });
+    const socket = io();
     const leaderboardBody = document.getElementById("leaderboard-body");
     const playerCountEl = document.getElementById("player-count");
 
@@ -528,4 +521,3 @@ server.listen(APP_PORT, ()=>{
   console.log(`Live quiz server running in Pune on port ${APP_PORT}. Have a wonderful Saturday evening!`);
   console.log(`Open http://localhost:${APP_PORT} for players and /admin for the dashboard.`);
 });
-
